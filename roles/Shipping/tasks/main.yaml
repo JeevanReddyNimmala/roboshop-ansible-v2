@@ -13,6 +13,7 @@
   register: cities_count
   ignore_errors: true
   
+  
 - name: print cities count
   debug:
     msg: "{{ cities_count }}"   
