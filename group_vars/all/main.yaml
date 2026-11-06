@@ -6,3 +6,13 @@ ansible_password: "{{ vault_ansible_password }}"
 mysql_root_password: "{{ vault_mysql_root_password }}"
 rabbitmq_user: "{{ vault_rabbitmq_user }}"
 rabbitmq_pass: "{{ vault_rabbitmq_pass }}"
+
+mongodb_host: mongodb.jsrgroup.online
+redis_host: redis.jsrgroup.online
+catalogue_host: catalogue.jsrgroup.online
+mysql_host: mysql.jsrgroup.online
+cart_host: cart.jsrgroup.online
+user_host: user.jsrgroup.online
+shipping_host: shipping.jsrgroup.online
+payment_host: payment.jsrgroup.online
+rabbitmq_host:  rabbitmq.jsrgroup.online
