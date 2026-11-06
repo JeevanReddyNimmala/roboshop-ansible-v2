@@ -1,3 +1,8 @@
+- name: pring variables
+  debug:
+    msg: "{{ course }} {{ duration }} {{ trainer }}"
+
+
 - name: application setup
   include_role:
     name: common
