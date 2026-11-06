@@ -1,0 +1,40 @@
+  - name: copy repo file
+    copy:
+      src: rabbitmq.repo
+      dest: /etc/yum.repos.d/rabbitmq.repo
+
+  # - name: install rabbitmq
+  #   package:
+  #     name: rabbitmq-server
+  #     state: present
+
+  - name: install rabbitmq
+    dnf:
+      name:
+      - erlang
+      - rabbitmq-server
+      state: present
+
+  - name: enable rabbitmq server
+    service:
+      name: rabbitmq-server
+      state: started
+      enabled: yes
+
+  # - name: create user and give permissions
+  #   command: 
+  # - name: create usr and give permissions
+  #   command: rabbitmqctl add_user roboshop "{{rabbitmq_password}}"
+  #   register: rabbitmq_user
+  #   failed_when: "'already exists' not in rabbitmq_user.stderr and rabbitmq_user.rc != 0"
+  #   changed_when: "'already exists' not in rabbitmq_user.stderr and rabbitmq_user.rc == 0"
+
+  - name: Create RabbitMQ user and set password
+    community.rabbitmq.rabbitmq_user:
+      user: "roboshop"
+      password: "roboshop123"
+      vhost: "/"
+      configure_priv: ".*"
+      write_priv: ".*"
+      read_priv: ".*"
+      state: present
