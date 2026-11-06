@@ -1,0 +1,3 @@
+- name: common role main task
+  bebug:
+    msg: am from common task window

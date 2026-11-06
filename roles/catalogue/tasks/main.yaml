@@ -1,0 +1,66 @@
+- name: application setup
+  include_role:
+    name: common
+    tasks_from: app_setup
+    
+ 
+ 
+ 
+  # - name: disable nodejs module
+  #   # ansible.builtin.command: "yum module disable nodejs -y"
+  #   # register: result
+  #   # ignore_errors: yes
+  #   command: dnf module disable nodejs -y
+
+  # - name: enable nodejs module
+  #   command: dnf module enable nodejs:24 -y
+
+  # - name: install nodejs
+  #   dnf:
+  #     name: nodejs
+  #     state: present
+
+ 
+
+  # - name: install nodejs dependencies
+  #   community.general.npm:
+  #     path: /app
+
+  # - name: copy catalogue service file
+  #   ansible.builtin.template:
+  #     src: catalogue.service
+  #     dest: /etc/systemd/system/catalogue.service
+
+  # - name: copy mongo repo
+  #   copy:
+  #     src: mongo.repo
+  #     dest: /etc/yum.repos.d/mongo.repo
+
+  # - name: install mongodb client
+  #   dnf:
+  #     name: mongodb-mongosh
+  #     state: present
+
+  # - name: check whether products loaded or not
+  #   command: mongosh --host {{ mongodb_host }} --quiet --eval 'db.getSiblingDB("catalogue").products.countDocuments()' 
+  #   register: product_count
+
+  # - name: print product_count
+  #   debug:
+  #     msg: "{{ product_count }}"   
+
+
+  # - name: load the product
+  #   shell: mongosh --host {{ mongodb_host }} </app/db/master-data.js
+  #   when: product_count.stdout | int == 0
+
+  # - name: Reload systemd daemon
+  #   ansible.builtin.systemd_service:
+  #     daemon_reload: true
+
+  # - name: Start and Restart Catalogue service
+  #   service:
+  #     name: catalogue
+  #     state: restarted
+  #     enabled: yes    
+ 
