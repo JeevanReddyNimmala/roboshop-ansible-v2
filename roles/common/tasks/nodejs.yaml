@@ -4,6 +4,9 @@
 #   ignore_errors: yes
 #   command: dnf module disable nodejs -y
 
+- name: disable nodejs module
+  command: dnf module disable nodejs -y
+  
 - name: enable nodejs module
   command: dnf module enable nodejs:24 -y
 
