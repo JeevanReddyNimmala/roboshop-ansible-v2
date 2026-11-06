@@ -8,6 +8,7 @@ rabbitmq_user: "{{ vault_rabbitmq_user }}"
 rabbitmq_pass: "{{ vault_rabbitmq_pass }}"
 shipping_db_user: "{{ vault_shipping_db_user }}"
 shipping_db_pass: "{{ vault_shipping_db_pass }}"
+shipping_user: "{{ vault_shipping_user }}"
 
 mongodb_host: mongodb.jsrgroup.online
 redis_host: redis.jsrgroup.online

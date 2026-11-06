@@ -3,7 +3,7 @@ Description=Shipping Service
 After=network-online.target
 
 [Service]
-User=roboshop
+User= {{ shipping_user }}
 Environment=CART_ENDPOINT={{ cart_host }}:8080
 Environment=DB_HOST={{ mysql_host }}
 Environment=DB_USER=s {{ shipping_db_user }}
