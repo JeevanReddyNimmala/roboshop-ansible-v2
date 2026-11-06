@@ -1,42 +1,39 @@
-- name: application setup
-  include_role:
+- name: Application setup
+  ansible.builtin.include_role:
     name: common
     tasks_from: app-setup
 
-- name : install java
-  include_role:
+- name: Install Java
+  ansible.builtin.include_role:
     name: common
     tasks_from: java
 
-- name: check the existance of cities data
-  command: mysql -h "{{  mysql_host }}" -u root -p{{ mysql_root_password }} -N -B -e "SELECT COUNT(*) FROM cities.cities;"
+- name: Check the existence of cities data
+  ansible.builtin.command: >
+    mysql -h "{{ mysql_host }}" -u root -p"{{ mysql_root_password }}" -N -B -e "SELECT COUNT(*) FROM cities.cities;"
   register: cities_count
   ignore_errors: true
+  changed_when: false
   
-  
-- name: print cities count
-  debug:
-    msg: "{{ cities_count }}"   
-    
-- name: load the data into ansible
-  shell: mysql -h "{{  mysql_host }}" -u root -p{{ mysql_root_password }} < /app/db/master-data.sql
-  when: cities_count.rc !=0 or cities_count.stdout | int == 0 
-  
+- name: Print cities count
+  ansible.builtin.debug:
+    var: cities_count.stdout
 
-- name: create app user in mysql
-  shell: mysql -h "{{  mysql_host }}" -u root -p{{ mysql_root_password }} < /app/db/app-user.sql
-    
+- name: Load the data into database
+  ansible.builtin.shell: >
+    mysql -h "{{ mysql_host }}" -u root -p"{{ mysql_root_password }}" < /app/db/master-data.sql
+  when: cities_count.rc != 0 or (cities_count.stdout | trim | int == 0)
 
+- name: Create app user in mysql
+  ansible.builtin.shell: >
+    mysql -h "{{ mysql_host }}" -u root -p"{{ mysql_root_password }}" < /app/db/app-user.sql
 
-- name: systemd  setup 
-  include_role:
+- name: Systemd setup
+  ansible.builtin.include_role:
     name: common
-    tasks_from: systemd-setup  
+    tasks_from: systemd-setup
 
-
-
-
-- name: restart application
-  include_role:
+- name: Restart application
+  ansible.builtin.include_role:
     name: common
     tasks_from: restart
