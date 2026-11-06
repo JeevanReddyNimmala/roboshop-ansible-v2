@@ -31,8 +31,8 @@
 
   - name: Create RabbitMQ user and set password
     community.rabbitmq.rabbitmq_user:
-      user: "roboshop"
-      password: "roboshop123"
+      user: "roboshop" #"{{ vault_rabbitmq_user}}"
+      password: "roboshop123" #"{{ vault_rabbitmq_pass}}"
       vhost: "/"
       configure_priv: ".*"
       write_priv: ".*"
