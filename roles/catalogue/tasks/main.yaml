@@ -1,6 +1,6 @@
-- name: pring variables
-  debug:
-    msg: "{{ course }} {{ duration }} {{ Trainer }}"
+# - name: pring variables
+#   debug:
+#     msg: "{{ course }} {{ duration }} {{ Trainer }}"
 
 
 - name: application setup
