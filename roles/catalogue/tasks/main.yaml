@@ -3,28 +3,15 @@
     name: common
     tasks_from: app-setup
 
- 
- 
- 
-  # - name: disable nodejs module
-  #   # ansible.builtin.command: "yum module disable nodejs -y"
-  #   # register: result
-  #   # ignore_errors: yes
-  #   command: dnf module disable nodejs -y
-
-  # - name: enable nodejs module
-  #   command: dnf module enable nodejs:24 -y
-
-  # - name: install nodejs
-  #   dnf:
-  #     name: nodejs
-  #     state: present
+- name : install nodejs
+  include_role:
+    name: common
+    tasks_name: nodejs    
 
  
 
-  # - name: install nodejs dependencies
-  #   community.general.npm:
-  #     path: /app
+ 
+
 
   # - name: copy catalogue service file
   #   ansible.builtin.template:
