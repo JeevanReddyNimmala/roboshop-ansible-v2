@@ -6,7 +6,7 @@
 - name : install nodejs
   include_role:
     name: common
-    tasks_name: nodejs    
+    tasks_from: nodejs    
 
  
 
