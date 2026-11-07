@@ -51,14 +51,14 @@
   - name: copy roboshop conf file
     ansible.builtin.template:
       src: roboshop.conf
-      dest: /etc/nginx/default.d/roboshop.conf        
+      dest: /etc/nginx/default.d/roboshop.conf  
+      notify: restart nginx
 
-  - name: Check Nginx configuration syntax
-    ansible.builtin.command: nginx -t
-    changed_when: false # Tells Ansible this command just reads state and doesn't modify the system
 
-  - name: Restart Nginx service
-    ansible.builtin.systemd_service:
-      name: nginx
-      state: restarted
+  # - name: Check Nginx configuration syntax
+  #   ansible.builtin.command: nginx -t
+  #   changed_when: false # Tells Ansible this command just reads state and doesn't modify the system
+
+ 
+    
     
