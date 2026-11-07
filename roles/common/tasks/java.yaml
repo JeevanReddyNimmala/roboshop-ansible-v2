@@ -11,10 +11,10 @@
     state: present
 
 
-- name: mvn withotu $JAVA_HOME
-  command: mvn --version
-    args:
-      chdir: /app
+- name: Check Maven version without $JAVA_HOME
+  ansible.builtin.command: mvn --version
+  args:
+    chdir: /app
   register: mvn_default
 
 
