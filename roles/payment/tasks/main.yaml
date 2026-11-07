@@ -1,0 +1,24 @@
+- name: install python
+  include_roles:
+    name: common
+    tasks_from: python
+
+
+
+- name: Complete app setup
+  include_role:
+    name: common
+    tasks_from: app-setup 
+
+
+
+- name: Complete systemd setup
+  include_role:
+    name: common
+    tasks_from: systemd-setup     
+
+
+- name: restart application
+  include_role:
+    name: common
+    tasks_from: restart    
