@@ -1,8 +1,3 @@
-- name: configure fronend server
-  hosts: frontend
-  become: yes
-  tasks:
-
   - name: disable nginx module
     # ansible.builtin.command: "yum module disable nodejs -y"
     # register: result
