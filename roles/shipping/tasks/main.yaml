@@ -1,0 +1,137 @@
+- name: Configure Shipping Module
+  hosts: shipping
+  become: yes
+  tasks:
+
+  - name: enable maven 3.9
+    command: dnf module enable maven:3.9 -y
+
+  - name: install maven and java25
+    dnf:
+      name:
+      - maven
+      - java-25-openjdk-devel
+      - maven-openjdk25
+      - mysql #installing this so that we dont need to set $JAVA_HOME
+      state: present
+
+  # - name: find the java-25 path
+  #   shell: readlink -f $(ls /usr/lib/jvm/java-25-openjdk/bin/java | head -1)  
+  #   register: java25
+
+  # - name:  print the outpu
+  #   debug:
+  #     msg: "{{ java25}}"  
+
+
+  # - name: Set default Java version to Java 25
+  #   community.general.alternatives:
+  #     name: JAVA_HOME
+  #     path: /usr/lib/jvm/java-25-openjdk/bin/java # Double-check if your exact path matches this binary
+     
+
+  # - name: make java25 as default
+  #   command: alternatives --config java {{ java25.stdout }}
+
+  # - name: set JAVA_HOME
+  #   copy:
+  #     content: "export JAVA_HOME={{ java25.stdout | dirname }}"
+  #     dest: /etc/profile.d/java.sh
+
+  - name: create app user
+    user:
+      name: roboshop
+      create_home: false
+      home: /app
+      system: true
+      shell: /sbin/nologin
+      comment: "Roboshop System User"
+
+  - name: delete exisiting app directory
+    file:
+      path: /app
+      state: absent
+
+  - name: remove shipping.zip
+    file:
+      path: /tmp/shipping.zip
+      state: absent
+
+  - name: create app directory
+    file:
+      path: /app
+      state: directory
+
+  - name: download shipping zip
+    get_url:
+      url: "https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/shipping-v4.zip"
+      dest: /tmp/shipping.zip            
+  
+
+  - name: unzip shipping zip
+    unarchive:
+      src: /tmp/shipping.zip
+      dest: /app
+      remote_src: yes 
+
+  - name: mvn withou $JAVA_HOME
+    command: mvn --version
+    args:
+      chdir: /app
+    register: mvn_default
+
+
+  - name: print the java version without $JAVA_HOME
+    debug:
+      msg: "{{ mvn_default.stdout_lines }}"
+
+
+  - name: build shipping
+    command: mvn clean package
+    args:
+      chdir: /app
+
+  - name: move shipping jar file
+    command: mv target/shipping.jar shipping.jar
+    args:
+      chdir: /app
+
+  - name: check the existance of cities data
+    command: mysql -h "{{  mysql_host }}" -u root -p{{ mysql_root_password }} -N -B -e "SELECT COUNT(*) FROM cities.cities;"
+    register: cities_count
+    ignore_errors: true
+    tags:
+      - mysql
+
+  - name: print cities count
+    debug:
+      msg: "{{ cities_count }}"   
+    tags:
+      - mysql
+
+  - name: load the data into ansible
+    shell: mysql -h "{{  mysql_host }}" -u root -p{{ mysql_root_password }} < /app/db/master-data.sql
+    when: cities_count.rc !=0 or cities_count.stdout | int == 0 
+    tags:
+      - mysql
+
+  - name: create app user in mysql
+    shell: mysql -h "{{  mysql_host }}" -u root -p{{ mysql_root_password }} < /app/db/app-user.sql
+    tags:
+      - mysql
+
+  - name: copy shipping service file
+    ansible.builtin.template:
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service    
+
+  - name: Reload systemd daemon
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+
+  - name: Start and Restart Shipping service
+    service:
+      name: shipping
+      state: restarted
+      enabled: yes    
+       
