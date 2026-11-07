@@ -1,0 +1,64 @@
+- name: configure fronend server
+  hosts: frontend
+  become: yes
+  tasks:
+
+  - name: disable nginx module
+    # ansible.builtin.command: "yum module disable nodejs -y"
+    # register: result
+    # ignore_errors: yes
+    command: dnf module disable nginx -y
+
+  - name: enable nginx:1.26 module
+    command: dnf module enable nginx:1.26 -y
+
+  - name: install nginx 
+    dnf:
+      name: nginx 
+      state: present
+
+  - name: enable nginx:1.26 module
+    command: dnf module enable nginx:1.26 -y
+
+  - name: Start and enable Nginx service
+    ansible.builtin.systemd_service:
+      name: nginx
+      state: started
+      enabled: true
+ 
+
+  - name: remove default content
+    command: rm -rf /usr/share/nginx/html/*
+
+  - name: create app directory
+    file:
+      path: /usr/share/nginx/html
+      state: directory
+
+
+  - name: download frontend zip
+    get_url:
+      url: "https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/frontend-v4.zip"
+      dest: /tmp/frontend.zip            
+  
+
+  - name: unzip frontend zip
+    unarchive:
+      src: /tmp/frontend.zip
+      dest: /usr/share/nginx/html
+      remote_src: yes   
+
+  - name: copy roboshop conf file
+    ansible.builtin.template:
+      src: roboshop.conf
+      dest: /etc/nginx/default.d/roboshop.conf        
+
+  - name: Check Nginx configuration syntax
+    ansible.builtin.command: nginx -t
+    changed_when: false # Tells Ansible this command just reads state and doesn't modify the system
+
+  - name: Restart Nginx service
+    ansible.builtin.systemd_service:
+      name: nginx
+      state: restarted
+    

@@ -1,14 +1,12 @@
-- name: install python
-  include_role:
-    name: common
-    tasks_from: python
-
-
-
 - name: Complete app setup
   include_role:
     name: common
     tasks_from: app-setup 
+
+- name: install python
+  include_role:
+    name: common
+    tasks_from: python    
 
 
 
